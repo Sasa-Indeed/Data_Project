@@ -26,7 +26,28 @@ bool Scanner::isAlpha(const std::string input){
     }
     return 1;
 }
+
+std::string Scanner::translate(std::string str, std::string find, std::string replace) {
+    using namespace std;
+    string result;
+    size_t find_len = find.size();
+    size_t pos,from=0;
+    while ( string::npos != ( pos=str.find(find,from) ) ) {
+        result.append( str, from, pos-from );
+        result.append( replace );
+        from = pos + find_len;
+    }
+    result.append( str, from , string::npos );
+    return result;
+}
 Scanner::Scanner(std::string tinyCode) {
+    tinyCode = translate(tinyCode, ":", "\\:");
+    tinyCode = translate(tinyCode, "-", "\\-");
+    tinyCode = translate(tinyCode, "]", "\\]");
+    tinyCode = translate(tinyCode, "^", "\\^");
+    tinyCode = translate(tinyCode, "$", "\\$");
+    tinyCode = translate(tinyCode, "*", "\\*");
+    tinyCode = translate(tinyCode, ".", "\\.");
     this->tinyCode = tinyCode;
 }
 
@@ -51,16 +72,24 @@ void Scanner::scan() {
                     tokensList.push_back(token_str);
                     token_str = "";
                 }
-                char* ptr = &tiny_in[i];
-                std::string temp = ptr;
-                tokensList.push_back(temp);
-                state = "start";
+                char* temp = &tiny_in[i];
+                std::string temp1;
+                if ((tiny_in[i] == '>' and tiny_in[i+1] == '=') or (tiny_in[i] == '<' and tiny_in[i+1] == '=')){
+                    temp1.push_back(temp[0]);
+                    temp1.push_back(temp[1]);
+                    tokensList.push_back(temp1);
+                    state = "start";
+                    i+= 1;
+                }
+                else{temp1.push_back(temp[0]);
+                    tokensList.push_back(temp1);
+                    state = "start";}
             }
             else if(state == "start"){
                 if(tiny_in[i] == ' '){
                     state = "start";
                 }
-                else if(isalnum(tiny_in[i])){
+                else if(isalpha(tiny_in[i])){
                     token_str += tiny_in[i];
                     state = "inid";
                 }
@@ -81,7 +110,7 @@ void Scanner::scan() {
                 }
             }
             else if(state == "inid"){
-                if((tiny_in[i] >= 'a' && tiny_in[i] <= 'z') || (tiny_in[i] >= 'A' && tiny_in[i] <= 'Z')){
+                if(std::isalpha(tiny_in[i])){
                     token_str += tiny_in[i];
                 }
                 else{
@@ -89,7 +118,7 @@ void Scanner::scan() {
                 }
             }
             else if(state == "isnum"){
-                if((tiny_in[i] >= '0' and tiny_in[i] <= '9')){
+                if(std::isdigit(tiny_in[i])){
                     token_str += tiny_in[i];
                 }
                 else{
@@ -113,10 +142,6 @@ void Scanner::scan() {
                 else{
                     token_str += tiny_in[i];
                 }
-            }
-            else if ((tiny_in[i] == '>' and tiny_in[i+1] == '=') or (tiny_in[i] == '<' and tiny_in[i+1] == '=')){
-                token_str = tiny_in[i] + tiny_in[i+1];
-                state = "done";
             }
             else if(state == "done"){
                 tokensList.push_back(token_str);
@@ -150,4 +175,15 @@ void Scanner::scan() {
         }
         else{ continue;}
     }
+    std::vector<std::string> temp = tokensList;
+    codeList = temp;
+    tokensList = tokenOutputs;
+}
+
+std::vector<std::string> Scanner::getCodeList() {
+    return codeList;
+}
+
+std::vector<std::string> Scanner::getTokenList() {
+    return tokensList;
 }
