@@ -16,7 +16,10 @@ class Scanner {
         Scanner(std::string tinyCode);
         void setTinyCode(std::string tinyCode);
         void scan();
-
+        bool inArray(const char &value, const std::vector<char> &array);
+        bool inArray(const std::string &value, const std::vector<std::string> &array);
+        bool isNumber(const std::string input);
+        bool isAlpha(const std::string input);
 };
 
 
