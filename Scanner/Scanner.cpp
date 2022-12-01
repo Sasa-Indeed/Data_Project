@@ -62,9 +62,9 @@ void Scanner::scan() {
     std::vector<char> special_chars = {'(', ')','+','-','*','/','=', ';', '<', '>'};
     std::vector<std::string> special_chars_string = {"(", ")","+","-","*","/","=", ";", "<", ">"};
     std::vector<std::string> reserved_words = {"if", "then", "else", "end", "repeat", "until", "read", "write"};
+    std::string state = "start";
     for(auto tiny_in: tokens){
         std::string token_str = "";
-        std::string state = "start";
         int i = 0;
         while (i < tiny_in.size()){
             if(inArray(tiny_in[i], special_chars) && state != "inassign" && state != "incomment"){
@@ -82,8 +82,8 @@ void Scanner::scan() {
                     i+= 1;
                 }
                 else{temp1.push_back(temp[0]);
-                    tokensList.push_back(temp1);
-                    state = "start";}
+                tokensList.push_back(temp1);
+                state = "start";}
             }
             else if(state == "start"){
                 if(tiny_in[i] == ' '){
@@ -102,7 +102,6 @@ void Scanner::scan() {
                     state = "inassign";
                 }
                 else if(tiny_in[i] == '{'){
-                    token_str += tiny_in[i];
                     state = "incomment";
                 }
                 else{
@@ -136,12 +135,9 @@ void Scanner::scan() {
             }
             else if(state == "incomment"){
                 if(tiny_in[i] == '}'){
-                    token_str += tiny_in[i];
                     state = "start";
                 }
-                else{
-                    token_str += tiny_in[i];
-                }
+
             }
             else if(state == "done"){
                 tokensList.push_back(token_str);
@@ -159,7 +155,7 @@ void Scanner::scan() {
     std::vector<std::string> tokenOutputs;
     for(auto token:tokensList){
         if(inArray(token, reserved_words)){
-            tokenOutputs.push_back("reserved word");
+            tokenOutputs.push_back(token);
         }
         else if(inArray(token, special_chars_string) or token == ">=" or token == "<="){
             tokenOutputs.push_back(token);
