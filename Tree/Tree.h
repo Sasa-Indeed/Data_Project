@@ -36,8 +36,12 @@ private:
 
     //For Destroying the tree
     void destroyTree(NodePointer& thisTreeNode);
-
+    //For inserting in the tree
     void insertTN(NodePointer& thisTreeNode, std::string expression, int index);
+
+    void inorder(NodePointer& thisTreeNode);
+    void preorder(NodePointer& thisTreeNode);
+    void postorder(NodePointer& thisTreeNode);
 
 public:
     //Default constructor
@@ -53,6 +57,18 @@ public:
 
     //Is empty method
     bool isEmpty();
+
+    void displayInorder() {
+        inorder(rootNode);
+    }
+
+    void displayPreorder() {
+        preorder(rootNode);
+    }
+
+    void displayPostorder() {
+        postorder(rootNode);
+    }
 
 };
 
@@ -124,8 +140,12 @@ if(!(index > expression.length()) || !(index < 0)) {
         thisTreeNode->rightNode->parentNode = thisTreeNode;
         insertTN(thisTreeNode->rightNode, expression, index + 1);
     } else if (std::isdigit(expression[index]) || std::isalpha(expression[index])) {
-        thisTreeNode->data = expression[index];
-        insertTN(thisTreeNode->parentNode, expression, index + 1);
+        std::string temp;
+        for (; std::isdigit(expression[index]) || std::isalpha(expression[index]) ; ++index) {
+            temp+= expression[index];
+        }
+        thisTreeNode->data = temp;
+        insertTN(thisTreeNode->parentNode, expression, index );
     } else if (expression[index] == ')') {
         insertTN(thisTreeNode->parentNode, expression, index + 1);
     } else if (expression[index] == ' '){
@@ -137,6 +157,34 @@ if(!(index > expression.length()) || !(index < 0)) {
 template<typename ElementType>
 void TreeType<ElementType>::insert(std::string expression, int index) {
     insertTN(rootNode,expression,index);
+}
+
+template<typename ElementType>
+void TreeType<ElementType>::inorder(NodePointer& thisTreeNode) {
+    if (thisTreeNode != NULL){
+        inorder(thisTreeNode->leftNode);
+        std::cout<< thisTreeNode->data;
+        inorder(thisTreeNode->rightNode);
+    }
+
+}
+
+template<typename ElementType>
+void TreeType<ElementType>::preorder(TreeType::NodePointer &thisTreeNode) {
+    if ( thisTreeNode != NULL){
+        std::cout<< thisTreeNode->data ;
+        preorder(thisTreeNode->leftNode);
+        preorder(thisTreeNode->rightNode);
+    }
+}
+
+template<typename ElementType>
+void TreeType<ElementType>::postorder(TreeType::NodePointer &thisTreeNode) {
+    if ( thisTreeNode != NULL){
+        postorder(thisTreeNode->leftNode);
+        postorder(thisTreeNode->rightNode);
+        std::cout<< thisTreeNode->data;
+    }
 }
 
 

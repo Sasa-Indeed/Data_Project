@@ -4,6 +4,11 @@
 
 int main() {
     TreeType<std::string> tr;
-    tr.insert("((1 + 2) * ( 3 / ( 4 - 5)))",0);
+    tr.insert("((aa+69)*(c/(d-1896)))",0);
+    tr.displayInorder();
+    std::cout<<'\n';
+    tr.displayPostorder();
+    std::cout<<'\n';
+    tr.displayPreorder();
     return 0;
 }
