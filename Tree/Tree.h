@@ -53,7 +53,7 @@ public:
     //Copy constructor
     TreeType(const TreeType<ElementType> & toCopyTree);
 
-    void insert(std::string expression, int index);
+    void insert(std::string expression);
 
     //Is empty method
     bool isEmpty();
@@ -126,7 +126,7 @@ bool TreeType<ElementType>::isEmpty(){
     return this->rootNode == NULL;
 }
 
-template<typename ElementType>
+/*template<typename ElementType>
 void TreeType<ElementType>::insertTN(NodePointer& thisTreeNode, std::string expression, int index) {
 if(!(index > expression.length()) || !(index < 0)) {
     if (expression[index] == '(') {
@@ -152,11 +152,57 @@ if(!(index > expression.length()) || !(index < 0)) {
         insertTN(thisTreeNode, expression, index + 1);
     }
 }
-}
+}*/
+
+
 
 template<typename ElementType>
-void TreeType<ElementType>::insert(std::string expression, int index) {
-    insertTN(rootNode,expression,index);
+void TreeType<ElementType>::insert(std::string expression) {
+    //currNode & index for traversing
+    TreeType::NodePointer currNode = this->rootNode;
+    int index = 0;
+
+    while (index < expression.length()){
+        /*If the token is a '(' then it will
+         * create a left Node and assigning
+         * the left node parent to current node
+         * then transcending into the left Node */
+        if (expression[index] == '('){
+            currNode->leftNode = new TreeType::Node();
+            currNode->leftNode->parentNode = currNode;
+            currNode = currNode->leftNode;
+            index++;
+        } else if (expression[index] == '+' || expression[index] == '-' || expression[index] == '*' ||
+                   expression[index] == '/'){
+            /*Assigning the currNode data to the
+             * current token and creating a right node
+             * making its parent to the current node then
+             * transcending to the right node*/
+            currNode->data = expression[index++];
+            currNode->rightNode = new TreeType::Node();
+            currNode->rightNode->parentNode = currNode;
+            currNode = currNode->rightNode;
+        } else if(std::isdigit(expression[index]) || std::isalpha(expression[index])){
+            /*looping to get if it is a multi-able set of
+             * characters or numbers*/
+            std::string temp;
+            for (; std::isdigit(expression[index]) || std::isalpha(expression[index]) ; ++index) {
+                temp+= expression[index];
+            }
+            //Assigning the currNode to the data then returning to the parent Node
+            currNode->data = temp;
+            currNode = currNode->parentNode;
+        } else if (expression[index] == ')'){
+            /*If it is the end of the expression
+             * then it will return to the parent Node*/
+            currNode = currNode->parentNode;
+            index++;
+        }
+
+    }
+
+
+   // insertTN(rootNode,expression,0);
 }
 
 template<typename ElementType>
