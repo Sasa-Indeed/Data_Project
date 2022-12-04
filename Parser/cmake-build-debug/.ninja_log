@@ -1,0 +1,24 @@
+# ninja log v5
+2	545	6916345398385612	CMakeFiles/Parser.dir/ParseTree.cpp.obj	b3f39870ccb5f69d
+7	1018	6916345403111790	CMakeFiles/Parser.dir/main.cpp.obj	8087903bba38cd9b
+1018	1142	6916345404318456	Parser.exe	f25fc005aa6d8755
+20	1400	6917655039060040	CMakeFiles/Parser.dir/main.cpp.obj	8087903bba38cd9b
+3	802	6917655251990976	CMakeFiles/Parser.dir/ParseTree.cpp.obj	b3f39870ccb5f69d
+803	1217	6917655256078849	Parser.exe	f25fc005aa6d8755
+2	532	6917665448902546	CMakeFiles/Parser.dir/ParseTree.cpp.obj	b3f39870ccb5f69d
+533	726	6917665450813708	Parser.exe	f25fc005aa6d8755
+3	552	6917689924906900	CMakeFiles/Parser.dir/ParseTree.cpp.obj	b3f39870ccb5f69d
+554	690	6917689926258139	Parser.exe	f25fc005aa6d8755
+2	561	6917709686602287	CMakeFiles/Parser.dir/ParseTree.cpp.obj	b3f39870ccb5f69d
+7	1022	6917709691191602	CMakeFiles/Parser.dir/main.cpp.obj	8087903bba38cd9b
+3	636	6917709827029343	CMakeFiles/Parser.dir/ParseTree.cpp.obj	b3f39870ccb5f69d
+8	1336	6917709834024818	CMakeFiles/Parser.dir/main.cpp.obj	8087903bba38cd9b
+1336	1523	6917709835846007	Parser.exe	f25fc005aa6d8755
+2	857	6917711302789297	CMakeFiles/Parser.dir/ParseTree.cpp.obj	b3f39870ccb5f69d
+9	1558	6917711309806966	CMakeFiles/Parser.dir/main.cpp.obj	8087903bba38cd9b
+1558	1829	6917711312460426	Parser.exe	f25fc005aa6d8755
+3	544	6917712623031120	CMakeFiles/Parser.dir/ParseTree.cpp.obj	b3f39870ccb5f69d
+9	995	6917712627534168	CMakeFiles/Parser.dir/main.cpp.obj	8087903bba38cd9b
+995	1126	6917712628812919	Parser.exe	f25fc005aa6d8755
+3	492	6917714982459004	CMakeFiles/Parser.dir/ParseTree.cpp.obj	b3f39870ccb5f69d
+492	633	6917714983830892	Parser.exe	f25fc005aa6d8755

@@ -16,8 +16,6 @@ class ParseTree {
         std::vector<std::string> tokensList;
         std::vector<std::string> codeList;
         std::set<std::string> symbols;
-        std::set<std::string> labelsDeclared;
-        std::set<std::string> labelsGOTOed;
         std::string curToken;
         std::string peekToken;
         class Node{
@@ -30,6 +28,7 @@ class ParseTree {
                 }
         };
         Node* rootNode;
+        std::vector<Node*> createdNodes;
     public:
         ParseTree(std::vector<std::string> tokens, std::vector<std::string> code){
             rootNode = new Node((std::string) "PROGRAM");
@@ -38,22 +37,36 @@ class ParseTree {
             curPos = 0;
             nextToken();
         }
-      //  ~ParseTree();
+        ParseTree(ParseTree &orgTree){
+            rootNode = new Node("PROGRAM");
+            rootNode->Children = orgTree.rootNode->Children;
+            this->codeList = orgTree.codeList;
+            this->tokensList = orgTree.tokensList;
+        }
+        ~ParseTree();
         void nextToken();
         bool checkToken(std::string kind);
-        bool checkPeek(std::string kind);
         bool match(std::string kind);
         bool isComparisonOperator();
         void abort(std::string msg);
         void program();
-        void statement();
-        void comparison();
-        void expression();
-        void term();
-        void unary();
-        void primary();
+        void statement(Node* parent, std::stack<Node*> s);
+        void comparison(Node* parent);
+        Node* expression(Node* currExpression);
+        void term(Node* parent);
+        std::string unary(Node* parent);
+        std::string primary(Node* parent);
         void semiColon();
-        void insert(Node* newStatement);
+        void insertRead(Node* parent, std::string id);
+        void insertWrite(Node* parent, Node* self);
+        std::vector<Node*> insertIf(Node* parent);
+        std::vector<Node*> insertRepeat(Node* parent);
+        Node* insertAssign(Node* parent, std::string value);
+        Node* insertExpression(Node* parent);
+        Node* insertTerm(Node* parent);
+        Node* insertUnary(Node* parent, std::string value);
+        void insertPrimary(Node* parent, std::string value);
+        Node* insertComparison(Node* parent);
 };
 
 
