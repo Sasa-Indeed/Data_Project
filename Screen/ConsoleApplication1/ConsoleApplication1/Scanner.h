@@ -14,6 +14,7 @@ private:
     std::string tinyCode;
     std::vector<std::string> tokensList;
     std::vector<std::string> codeList;
+    std::vector<int> tokensPerLine;
 public:
     Scanner(std::string tinyCode);
     void setTinyCode(std::string tinyCode);
@@ -24,6 +25,7 @@ public:
     bool isAlpha(const std::string input);
     std::vector<std::string> getCodeList();
     std::vector<std::string> getTokenList();
+    std::vector<int> getTokensPerLine();
     std::string translate(std::string orgStr, std::string remove, std::string replace);
 
 };

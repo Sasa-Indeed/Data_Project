@@ -17,7 +17,10 @@
 class ParseTree {
 private:
     int curPos;
+    int line;
+    int i;
     std::vector<std::string> tokensList;
+    std::vector<int> tokensPerLine;
     std::vector<std::string> codeList;
     std::vector<std::string> errors;
     std::set<std::string> symbols;
@@ -35,11 +38,14 @@ private:
     Node* rootNode;
     std::vector<Node*> createdNodes;
 public:
-    ParseTree(std::vector<std::string> tokens, std::vector<std::string> code) {
+    ParseTree(std::vector<std::string> tokens, std::vector<std::string> code, std::vector<int> tokensPerLine) {
         rootNode = new Node((std::string)"PROGRAM");
         this->tokensList = tokens;
         this->codeList = code;
+        this->tokensPerLine = tokensPerLine;
         curPos = 0;
+        line = 0;
+        i = 0;
         nextToken();
     }
     ParseTree(ParseTree& orgTree) {
@@ -51,17 +57,17 @@ public:
     ~ParseTree();
     void nextToken();
     bool checkToken(std::string kind);
-    bool match(std::string kind, int line);
+    bool match(std::string kind);
     bool isComparisonOperator();
     void errorDetection(std::string msg);
     void program();
-    void statement(Node* parent, std::stack<Node*> s,int line);
-    void comparison(Node* parent, int line);
-    void expression(Node* currExpression, int line);
-    void term(Node* parent, int line);
-    std::string unary(Node* parent, int line);
-    std::string primary(Node* parent, int line);
-    void semiColon(int line);
+    void statement(Node* parent, std::stack<Node*> s);
+    void comparison(Node* parent);
+    void expression(Node* currExpression);
+    void term(Node* parent);
+    std::string unary(Node* parent);
+    std::string primary(Node* parent);
+    void semiColon();
     void insertRead(Node* parent, std::string id);
     void insertWrite(Node* parent, Node* self);
     std::vector<Node*> insertIf(Node* parent);

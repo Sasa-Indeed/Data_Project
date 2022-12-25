@@ -12,6 +12,10 @@ ParseTree::~ParseTree() {
     delete rootNode;
 }
 void ParseTree::nextToken() {
+    if (curPos == tokensPerLine[i]) {
+        line++;
+        i++;
+    }
     if (curPos < codeList.size() - 1) {
         this->curToken = tokensList[curPos];
         this->peekToken = tokensList[curPos + 1];
@@ -25,7 +29,7 @@ void ParseTree::nextToken() {
     else
     {
         this->curToken = "EOF";
-        this->peekToken = "Something random lol";
+        this->peekToken = "";
     }
 }
 
@@ -33,10 +37,10 @@ bool ParseTree::checkToken(std::string kind) {
     return kind == curToken;
 }
 
-bool ParseTree::match(std::string kind, int line) {
+bool ParseTree::match(std::string kind) {
     if (!checkToken(kind)) {
          
-        ParseTree::errorDetection("Expected " + kind + "at line " + std::to_string(line) + ", got " + curToken);
+        ParseTree::errorDetection("Expected " + kind + " at line " + std::to_string(line) + ", got " + curToken);
         return false;
     }
     else {
@@ -55,13 +59,12 @@ void ParseTree::errorDetection(std::string msg) {
 
 void ParseTree::program() {
     std::stack<Node*> s;
-    int line = 1;
     while (!checkToken("EOF")) {
-        ParseTree::statement(rootNode, s,line++);
+        ParseTree::statement(rootNode, s);
     }
 }
 
-void ParseTree::statement(Node* parent, std::stack<Node*> s,int line) {
+void ParseTree::statement(Node* parent, std::stack<Node*> s) {
     s.push(parent);
     if (checkToken("if")) {
         //        std::cout<<"STATEMENT-IF"<<std::endl;
@@ -70,12 +73,12 @@ void ParseTree::statement(Node* parent, std::stack<Node*> s,int line) {
         std::vector<Node*> currentIf = insertIf(currParent);
         Node* currentIfBody = currentIf[1];
         nextToken();
-        comparison(insertComparison(currentIf[0]), line);
-        if (match("then", line++)) {
+        comparison(insertComparison(currentIf[0]));
+        if (match("then")) {
             while (!checkToken("end") && !checkToken("EOF")) {
-                statement(currentIfBody, s, line++);
+                statement(currentIfBody, s);
             }
-            match("end", line);
+            match("end");
         }
     }
     else if (checkToken("repeat")) {
@@ -85,20 +88,20 @@ void ParseTree::statement(Node* parent, std::stack<Node*> s,int line) {
         std::vector<Node*> currRepeat = insertRepeat(currParent);
         nextToken();
         while (!checkToken("until")) {
-            statement(currRepeat[1], s, line++);
+            statement(currRepeat[1], s);
         }
-        if (match("until", line)) {
-            comparison(insertComparison(currRepeat[0]), line);
-            semiColon(line);
+        if (match("until")) {
+            comparison(insertComparison(currRepeat[0]));
+            semiColon();
         }
     }
     else if (checkToken("read")) {
         /*std::cout<<"STATEMENT-READ"<<std::endl;*/
         nextToken();
-        if (match("identifier", line)) {
+        if (match("identifier")) {
             std::string id = codeList[curPos - 2];
             symbols.insert(codeList[curPos - 2]);
-            semiColon(line);
+            semiColon();
             insertRead(parent, "ID " + id);
         }
     }
@@ -107,8 +110,8 @@ void ParseTree::statement(Node* parent, std::stack<Node*> s,int line) {
         Node* currWrite = new Node("STATEMENT-WRITE");
         createdNodes.push_back(currWrite);
         nextToken();
-        expression(insertExpression(currWrite), line);
-        semiColon(line);
+        expression(insertExpression(currWrite));
+        semiColon();
         insertWrite(parent, currWrite);
     }
     else if (checkToken("identifier")) {
@@ -117,68 +120,68 @@ void ParseTree::statement(Node* parent, std::stack<Node*> s,int line) {
             symbols.insert(codeList[curPos - 1]);
         }
         nextToken();
-        if (match(":=",line)) {
-            expression(insertExpression(insertAssign(parent, "ID " + codeList[curPos - 3])), line);
-            semiColon(line);
+        if (match(":=")) {
+            expression(insertExpression(insertAssign(parent, "ID " + codeList[curPos - 3])));
+            semiColon();
         }
     }else{
         nextToken();
     }
 }
 
-void ParseTree::comparison(Node* currComparison, int line) {
+void ParseTree::comparison(Node* currComparison) {
     //    std::cout<<"COMPARISON"<<std::endl;
-    expression(insertExpression(currComparison), line);
+    expression(insertExpression(currComparison));
     if (isComparisonOperator()) {
         nextToken();
-        expression(insertExpression(currComparison), line);
+        expression(insertExpression(currComparison));
     }
     else {
         errorDetection("Expected comparison operator at " + codeList[curPos] + "at line " + std::to_string(line));
     }
     while (isComparisonOperator()) {
         nextToken();
-        expression(insertExpression(currComparison), line);
+        expression(insertExpression(currComparison));
     }
 }
 
-void ParseTree::expression(Node* currExpression, int line) {
+void ParseTree::expression(Node* currExpression) {
     //    std::cout<<"EXPRESSION"<<std::endl;
-    term(insertTerm(currExpression), line);
+    term(insertTerm(currExpression));
     while (checkToken("+") || checkToken("-")) {
         nextToken();
-        term(insertTerm(currExpression), line);
+        term(insertTerm(currExpression));
     }
 }
 
-void ParseTree::term(Node* currTerm, int line) {
+void ParseTree::term(Node* currTerm) {
     //    std::cout<<"TERM"<<std::endl;
     if (codeList[curPos - 1] == "-")
-        unary(insertUnary(currTerm, codeList[curPos - 1]), line);
+        unary(insertUnary(currTerm, codeList[curPos - 1]));
     else {
-        unary(insertUnary(currTerm, "+"), line);
+        unary(insertUnary(currTerm, "+"));
     }
     while (checkToken("*") || checkToken("/")) {
         nextToken();
         if (codeList[curPos - 1] == "-")
-            unary(insertUnary(currTerm, codeList[curPos - 1]), line);
+            unary(insertUnary(currTerm, codeList[curPos - 1]));
         else {
-            unary(insertUnary(currTerm, "+"), line);
+            unary(insertUnary(currTerm, "+"));
         }
     }
 }
 
-std::string ParseTree::unary(Node* currUnary, int line) {
+std::string ParseTree::unary(Node* currUnary) {
     //    std::cout<<"UNARY"<<std::endl;
     while (checkToken("+") || checkToken("-")) {
         nextToken();
     }
     int tempCurPos = curPos - 2;
-    insertPrimary(currUnary, primary(currUnary, line));
+    insertPrimary(currUnary, primary(currUnary));
     return codeList[tempCurPos];
 }
 
-std::string ParseTree::primary(Node* parent , int line) {
+std::string ParseTree::primary(Node* parent) {
     //    std::cout<<"PRIMARY("<<codeList[curPos-1]<<")"<<std::endl;
 
     if (checkToken("number")) {
@@ -199,9 +202,9 @@ std::string ParseTree::primary(Node* parent , int line) {
     }
 }
 
-void ParseTree::semiColon(int line) {
+void ParseTree::semiColon() {
     //    std::cout<<";"<<std::endl;
-    match(";" ,line);
+    match(";");
 }
 
 void ParseTree::insertRead(ParseTree::Node* parent, std::string id) {

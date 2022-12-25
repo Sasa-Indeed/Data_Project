@@ -65,6 +65,7 @@ void Scanner::scan() {
     std::vector<std::string> special_chars_string = { "(", ")","+","-","*","/","=", ";", "<", ">" };
     std::vector<std::string> reserved_words = { "if", "then", "else", "end", "repeat", "until", "read", "write" };
     std::string state = "start";
+    int tokensCount = 0;
     for (auto tiny_in : tokens) {
         std::string token_str = "";
         int i = 0;
@@ -74,6 +75,7 @@ void Scanner::scan() {
         while (i < tiny_in.size()) {
             if (inArray(tiny_in[i], special_chars) && state != "inassign" && state != "incomment") {
                 if (token_str != "") {
+                    tokensCount++;
                     tokensList.push_back(token_str);
                     token_str = "";
                 }
@@ -82,12 +84,14 @@ void Scanner::scan() {
                 if ((tiny_in[i] == '>' && tiny_in[i + 1] == '=') || (tiny_in[i] == '<' && tiny_in[i + 1] == '=')) {
                     temp1.push_back(temp[0]);
                     temp1.push_back(temp[1]);
+                    tokensCount++;
                     tokensList.push_back(temp1);
                     state = "start";
                     i += 1;
                 }
                 else {
                     temp1.push_back(temp[0]);
+                    tokensCount++;
                     tokensList.push_back(temp1);
                     state = "start";
                 }
@@ -147,6 +151,7 @@ void Scanner::scan() {
 
             }
             else if (state == "done") {
+                tokensCount++;
                 tokensList.push_back(token_str);
                 token_str = "";
                 state = "start";
@@ -154,12 +159,18 @@ void Scanner::scan() {
             }
             i += 1;
         }
+
+        
+
         if (token_str != "") {
+            tokensCount++;
             tokensList.push_back(token_str);
             token_str = "";
         }
+        this->tokensPerLine.push_back(tokensCount);
     }
     std::vector<std::string> tokenOutputs;
+
     for (auto token : tokensList) {
         if (inArray(token, reserved_words)) {
             tokenOutputs.push_back(token);
@@ -189,4 +200,7 @@ std::vector<std::string> Scanner::getCodeList() {
 
 std::vector<std::string> Scanner::getTokenList() {
     return tokensList;
+}
+std::vector<int> Scanner::getTokensPerLine() {
+    return tokensPerLine;
 }
