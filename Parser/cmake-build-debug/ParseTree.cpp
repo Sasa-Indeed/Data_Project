@@ -6,7 +6,7 @@
 #include <stack>
 #include <queue>
 
-#include "D:\MSVProjects\TINYLangScreens\TINYLangScreens\ParseTree.h"
+#include "ParseTree.h"
 ParseTree::~ParseTree() {
     for (auto Node: createdNodes) {
         delete Node;
@@ -35,7 +35,7 @@ bool ParseTree::checkToken(std::string kind) {
     return kind == curToken;
 }
 
-void ParseTree::match(std::string kind) {
+bool ParseTree::match(std::string kind) {
     if(!checkToken(kind)){
         ParseTree::abort("Expected " + kind + ", got " + curToken);
     }
@@ -135,7 +135,7 @@ void ParseTree::comparison(Node* currComparison) {
     }
 }
 
-void ParseTree::expression(Node* currExpression) {
+ParseTree::Node* ParseTree::expression(Node* currExpression) {
 //    std::cout<<"EXPRESSION"<<std::endl;
     term(insertTerm(currExpression));
     while(checkToken("+") || checkToken("-")){

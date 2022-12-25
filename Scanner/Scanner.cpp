@@ -2,10 +2,8 @@
 // Created by Mohamed Ali on 16-Nov-22.
 //
 
-#include "D:\MSVProjects\TINYLangScreens\TINYLangScreens\Scanner.h"
-#include <iostream>
-#include <string>
-#include <sstream>
+#include "Scanner.h"
+#include <bits/stdc++.h>
 bool Scanner::inArray(const char &value, const std::vector<char> &array)
 {
     return std::find(array.begin(), array.end(), value) != array.end();
@@ -76,7 +74,7 @@ void Scanner::scan() {
                 }
                 char* temp = &tiny_in[i];
                 std::string temp1;
-                if ((tiny_in[i] == '>' && tiny_in[i+1] == '=') || (tiny_in[i] == '<' && tiny_in[i+1] == '=')){
+                if ((tiny_in[i] == '>' and tiny_in[i+1] == '=') or (tiny_in[i] == '<' and tiny_in[i+1] == '=')){
                     temp1.push_back(temp[0]);
                     temp1.push_back(temp[1]);
                     tokensList.push_back(temp1);
@@ -159,7 +157,7 @@ void Scanner::scan() {
         if(inArray(token, reserved_words)){
             tokenOutputs.push_back(token);
         }
-        else if(inArray(token, special_chars_string) || token == ">=" || token == "<="){
+        else if(inArray(token, special_chars_string) or token == ">=" or token == "<="){
             tokenOutputs.push_back(token);
         }
         else if(token == ":="){
